@@ -8,6 +8,12 @@ TILE_SIZE = 25
 WINDOW_WIDTH = TILE_SIZE * COLUMNS 
 WINDOW_HEIGHT = TILE_SIZE * ROWS 
 
+class Tile:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
 # Game Window
 
 window = tkinter.Tk()
@@ -34,6 +40,20 @@ screen_height = window.winfo_screenheight()
 window_x = int((screen_width - window_width) / 2)
 window_y = int((screen_height - window_height) / 2)
 
+# Format "(w)x(h)+(x)+(y)"
 window.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
+
+# Initialize Game
+snake = Tile(5*TILE_SIZE,5*TILE_SIZE) # Single tile for snake's head
+
+def draw():
+    global snake # Referencing external snake variable and not a local one in function
+    
+    # Draw Snake
+    canvas.create_rectangle(snake.x, snake.y, (snake.x + TILE_SIZE), (snake.y + TILE_SIZE), fill= "lime green")
+    
+    window.after(100, draw) # Every 100ms, snake will be drawn. AKA Running at 10 fps
+    
+draw()
 
 window.mainloop()
