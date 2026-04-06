@@ -76,13 +76,26 @@ def change_direction(e): # e is event
 
 def move():
     global snake
-    global food
     
     # Collision
     if snake.x == food.x and snake.y == food.y:
         snake_body.append(Tile(food.x, food.y))
+        
+        # Random fruit spawn after consumption
         food.x = random.randint(0, COLUMNS-1) * TILE_SIZE
         food.y = random.randint(0, ROWS-1) * TILE_SIZE
+        
+    # Update the snake's body
+    for i in range(len(snake_body)-1, -1, -1): 
+    # Starting from the end of the list to 0 because second parameter is not inclusive, third parameter means moving backwards
+        tile = snake_body[i]
+        if i == 0:
+            tile.x = snake.x
+            tile.y = snake.y
+        else:
+            old_tile = snake_body[i-1]
+            tile.x = old_tile.x
+            tile.y = old_tile.y
     
     snake.x += velocity_x*TILE_SIZE
     snake.y += velocity_y*TILE_SIZE
@@ -97,10 +110,13 @@ def draw():
     # Draw Snake
     canvas.create_rectangle(snake.x, snake.y, (snake.x + TILE_SIZE), (snake.y + TILE_SIZE), fill= "lime green")
     
-    # Draw Food
+    # Draw Apple
     canvas.create_rectangle(food.x, food.y, (food.x + TILE_SIZE), (food.y + TILE_SIZE), fill= "red")
     
-    window.after(100, draw) # Every 100ms, snake will be drawn. AKA Running at 10 fps
+    for tile in snake_body:
+        canvas.create_rectangle(tile.x, tile.y, (tile.x + TILE_SIZE), (tile.y + TILE_SIZE), fill= "lime green")
+    
+    window.after(120, draw) # Every 100ms, snake will be drawn. AKA Running at 10 fps
     
 draw()
 window.bind("<KeyRelease>", change_direction)
